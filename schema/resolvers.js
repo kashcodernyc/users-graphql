@@ -1,5 +1,6 @@
 import { userList } from "../fakeData.js";
 import { movieList } from "../fakeData.js";
+import _ from 'lodash';
 
 export const resolvers = {
     Query: {
@@ -22,6 +23,26 @@ export const resolvers = {
     User: {
         favoriteMovies: () => {
             return movieList.filter((movie) => movie.isInTheaters === true)
+        }
+    },
+    Mutation: {
+        createUser: (parent, args) => {
+            const user = args.input;
+            const lastId = userList[userList.length - 1].id;
+            user.id = lastId+1;
+            userList.push(user);
+            return user;
+        },
+        updateUsername: (parent, args) => {
+            const { id, newUsername } = args.input;
+            const updateUser = userList.find((user) => user.id === Number(id));
+            updateUser.username = newUsername;
+            return updateUser;
+        },
+        deleteUser: (parent, args) => {
+            const id = args.id
+            _.remove(userList, (user) => user.id === Number(id))
+            return null;
         }
     }
 };
