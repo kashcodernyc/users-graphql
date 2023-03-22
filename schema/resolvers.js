@@ -5,7 +5,8 @@ import _ from 'lodash';
 export const resolvers = {
     Query: {
         users: () => {
-            return userList;
+            if(userList) return { users: userList };
+            return { message: "there was error fetching data"}
         },
         user: (parent, args) => {
             const id = args.id;
@@ -44,6 +45,19 @@ export const resolvers = {
             _.remove(userList, (user) => user.id === Number(id))
             return null;
         }
-    }
+    },
+    UsersResult: {
+        __resolveType(obj){
+            if(obj.users){
+                return "UserSuccessfulResult"
+            }
+            if(obj.message){
+                return "UsersErrorResult"
+            }
+
+            return null;
+
+        },
+    },
 };
 
